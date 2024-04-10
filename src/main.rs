@@ -6,7 +6,7 @@ use std::env;
 
 fn main() {
     // コマンドライン引数を取得
-    let args = get_command_line_arguments();
+    let args: Vec<String> = get_command_line_arguments();
     if args.len() != 2 {
         println!("missing file name!");
         println!("Usage: {} <file name>", args[0]);
