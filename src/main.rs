@@ -71,15 +71,29 @@ impl fmt::Display for InterpretError {
 
 // brainfxxkコードを実行する関数
 fn run(code: &str, input: &str) -> Result<String, InterpretError> {
-    let mut inp = 0;                                             // input pointer
-    let input: Vec<u8> = Vec::from(input.as_bytes());                   // input memory
-    let mut oup = 0;                                             // output pointer
-    let mut output: Vec<u8> = vec![0; 1000];                            // output memory
+    // input pointer
+    let mut inp = 0;
 
-    let mut ip = 0;                                              // instruction pointer
-    let i_memory: Vec<u8> = Vec::from(code.as_bytes());                 // instruction memory
-    let mut dp = 0;                                              // data pointer
-    let mut d_memory: Vec<u8> = vec![0; 1000];                          // data memory
+    // input memory
+    let input: Vec<u8> = Vec::from(input.as_bytes());
+
+    // output pointer
+    let mut oup = 0;
+
+    // output memory
+    let mut output: Vec<u8> = vec![0; 1000];
+
+    // instruction pointer
+    let mut ip = 0;
+
+    // instruction memory
+    let i_memory: Vec<u8> = Vec::from(code.as_bytes());
+
+    // data pointer
+    let mut dp = 0;
+
+    // data memory
+    let mut d_memory: Vec<u8> = vec![0; 1000];
 
     loop {
         // for debug
