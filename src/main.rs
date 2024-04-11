@@ -1,6 +1,6 @@
+use std::env;
 use std::fs::File;
 use std::io::Read;
-use std::env;
 
 mod interpreter;
 use interpreter::Interpreter;

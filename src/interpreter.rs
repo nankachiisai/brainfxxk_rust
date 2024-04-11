@@ -35,36 +35,40 @@ impl Interpreter {
             // println!("i_memory[{}]: {}", ip, i_memory[ip] as char);
             // println!("d_memory[{}]: {}", dp, d_memory[dp]);
             // println!("");
-    
+
             match self.m_inst[self.p_inst] {
-                b'>' => self.p_data += 1,                 // increment pointer
-                b'<' => self.p_data -= 1,                 // decrement pointer
-                b'+' => self.m_data[self.p_data] += 1,       // increment value
-                b'-' => self.m_data[self.p_data] -= 1,       // decrement value
-                b'.' => {                        // output value
+                b'>' => self.p_data += 1,              // increment pointer
+                b'<' => self.p_data -= 1,              // decrement pointer
+                b'+' => self.m_data[self.p_data] += 1, // increment value
+                b'-' => self.m_data[self.p_data] -= 1, // decrement value
+                b'.' => {
+                    // output value
                     self.m_output[self.p_output] = self.m_data[self.p_data];
                     self.p_output += 1;
-                },
-                b',' => {                        // input value
+                }
+                b',' => {
+                    // input value
                     self.m_data[self.p_data] = self.m_input[self.p_input];
                     self.p_input += 1;
-                },
-                b'[' => {                        // jump forward
+                }
+                b'[' => {
+                    // jump forward
                     if self.m_data[self.p_data] == 0 {
                         while self.m_inst[self.p_inst] != b']' {
                             self.p_inst += 1;
                         }
                         self.p_inst += 1;
                     }
-                },
-                b']' => {                        // jump backward
+                }
+                b']' => {
+                    // jump backward
                     if self.m_data[self.p_data] != 0 {
                         while self.m_inst[self.p_inst] != b'[' {
                             self.p_inst -= 1;
                         }
                         self.p_inst -= 1;
                     }
-                },
+                }
                 _ => (),
             }
 
@@ -76,7 +80,7 @@ impl Interpreter {
                 self.p_inst += 1;
             }
         }
-    
+
         let ret = String::from_utf8(self.m_output.clone()).unwrap();
         Ok(ret)
     }
