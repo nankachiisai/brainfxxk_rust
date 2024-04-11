@@ -42,5 +42,5 @@ fn read_file(file_path: &str) -> Result<String, std::io::Error> {
 // コマンドライン引数を取得する関数
 fn get_command_line_arguments() -> Vec<String> {
     let args: Vec<String> = env::args().collect();
-    args.to_vec()
+    args
 }
