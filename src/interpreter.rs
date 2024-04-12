@@ -13,6 +13,12 @@ pub struct Interpreter {
     m_data: Vec<u8>,   // data memory
 }
 
+// 実行成功時の戻り値
+pub enum Success {
+    Running, // プログラムが実行途中であることを表す
+    Exit,    // プログラムを実行し終わったことを表す
+}
+
 impl Interpreter {
     // 構造体を初期化する
     pub fn new(instruction: &str, input: &str) -> Interpreter {
@@ -30,59 +36,66 @@ impl Interpreter {
 
     // brainfxxkコードを与えられた入力に従って実行する
     pub fn run(&mut self) -> Result<String, InterpretError> {
+        // プログラムを実行し終わるまでループ
         loop {
-            // for debug
-            // println!("i_memory[{}]: {}", ip, i_memory[ip] as char);
-            // println!("d_memory[{}]: {}", dp, d_memory[dp]);
-            // println!("");
-
-            match self.m_inst[self.p_inst] {
-                b'>' => self.p_data += 1,              // increment pointer
-                b'<' => self.p_data -= 1,              // decrement pointer
-                b'+' => self.m_data[self.p_data] += 1, // increment value
-                b'-' => self.m_data[self.p_data] -= 1, // decrement value
-                b'.' => {
-                    // output value
-                    self.m_output[self.p_output] = self.m_data[self.p_data];
-                    self.p_output += 1;
+            match self.step() {
+                Ok(Success::Running) => (),
+                Ok(Success::Exit) => {
+                    return Ok(String::from_utf8(self.m_output.clone()).unwrap());
+                },
+                Err(e) => {
+                    return Err(e);
                 }
-                b',' => {
-                    // input value
-                    self.m_data[self.p_data] = self.m_input[self.p_input];
-                    self.p_input += 1;
-                }
-                b'[' => {
-                    // jump forward
-                    if self.m_data[self.p_data] == 0 {
-                        while self.m_inst[self.p_inst] != b']' {
-                            self.p_inst += 1;
-                        }
-                        self.p_inst += 1;
-                    }
-                }
-                b']' => {
-                    // jump backward
-                    if self.m_data[self.p_data] != 0 {
-                        while self.m_inst[self.p_inst] != b'[' {
-                            self.p_inst -= 1;
-                        }
-                        self.p_inst -= 1;
-                    }
-                }
-                _ => (),
-            }
-
-            // インストラクションポインタを進める
-            // 最後まで実行したら終了
-            if self.m_inst.len() - 1 == self.p_inst {
-                break;
-            } else {
-                self.p_inst += 1;
             }
         }
+    }
 
-        let ret = String::from_utf8(self.m_output.clone()).unwrap();
-        Ok(ret)
+    // 1ステップごとに実行する
+    pub fn step(&mut self) -> Result<Success, InterpretError> {
+        match self.m_inst[self.p_inst] {
+            b'>' => self.p_data += 1,              // increment pointer
+            b'<' => self.p_data -= 1,              // decrement pointer
+            b'+' => self.m_data[self.p_data] += 1, // increment value
+            b'-' => self.m_data[self.p_data] -= 1, // decrement value
+            b'.' => {
+                // output value
+                self.m_output[self.p_output] = self.m_data[self.p_data];
+                self.p_output += 1;
+            }
+            b',' => {
+                // input value
+                self.m_data[self.p_data] = self.m_input[self.p_input];
+                self.p_input += 1;
+            }
+            b'[' => {
+                // jump forward
+                if self.m_data[self.p_data] == 0 {
+                    while self.m_inst[self.p_inst] != b']' {
+                        self.p_inst += 1;
+                    }
+                    self.p_inst += 1;
+                }
+            }
+            b']' => {
+                // jump backward
+                if self.m_data[self.p_data] != 0 {
+                    while self.m_inst[self.p_inst] != b'[' {
+                        self.p_inst -= 1;
+                    }
+                    self.p_inst -= 1;
+                }
+            }
+            _ => (),
+        }
+
+        // インストラクションポインタを進める
+        // 最後まで実行したら終了
+        if self.m_inst.len() - 1 == self.p_inst {
+            Ok(Success::Exit)
+        } else {
+            self.p_inst += 1;
+            Ok(Success::Running)
+        }
     }
 }
 
