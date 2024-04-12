@@ -42,7 +42,7 @@ impl Interpreter {
                 Ok(Success::Running) => (),
                 Ok(Success::Exit) => {
                     return Ok(String::from_utf8(self.m_output.clone()).unwrap());
-                },
+                }
                 Err(e) => {
                     return Err(e);
                 }
@@ -85,7 +85,7 @@ impl Interpreter {
                     self.p_inst -= 1;
                 }
             }
-            _ => (),
+            _ => (), // ignore
         }
 
         // インストラクションポインタを進める
