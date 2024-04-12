@@ -42,10 +42,10 @@ impl Interpreter {
                 Ok(Success::Running) => (),
                 Ok(Success::Exit) => {
                     return Ok(String::from_utf8(self.m_output.clone()).unwrap());
-                }
+                },
                 Err(e) => {
                     return Err(e);
-                }
+                },
             }
         }
     }
@@ -61,12 +61,12 @@ impl Interpreter {
                 // output value
                 self.m_output[self.p_output] = self.m_data[self.p_data];
                 self.p_output += 1;
-            }
+            },
             b',' => {
                 // input value
                 self.m_data[self.p_data] = self.m_input[self.p_input];
                 self.p_input += 1;
-            }
+            },
             b'[' => {
                 // jump forward
                 if self.m_data[self.p_data] == 0 {
@@ -75,7 +75,7 @@ impl Interpreter {
                     }
                     self.p_inst += 1;
                 }
-            }
+            },
             b']' => {
                 // jump backward
                 if self.m_data[self.p_data] != 0 {
@@ -84,7 +84,7 @@ impl Interpreter {
                     }
                     self.p_inst -= 1;
                 }
-            }
+            },
             _ => (), // ignore
         }
 
